@@ -14,7 +14,7 @@ public class TestClass {
 
     public void saveUser(){
         int i = 0;
-        while(i < 1000){
+        while(i < 100){
             User user = new User();
             user.setRole(Role.CLIENT);
             userService.saveUser(user);
