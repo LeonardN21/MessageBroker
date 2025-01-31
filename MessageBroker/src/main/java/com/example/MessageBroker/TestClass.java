@@ -13,9 +13,13 @@ public class TestClass {
    UserService userService;
 
     public void saveUser(){
-        User user = new User();
-        user.setRole(Role.ADMIN);
-        userService.saveUser(user);
+        int i = 0;
+        while(i < 1000){
+            User user = new User();
+            user.setRole(Role.CLIENT);
+            userService.saveUser(user);
+            i++;
+        }
     }
 
 }
