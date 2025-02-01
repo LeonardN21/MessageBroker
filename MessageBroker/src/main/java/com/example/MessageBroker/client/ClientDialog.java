@@ -39,7 +39,7 @@ public class ClientDialog {
 
         if (printWriter != null) {
             // Sends the registration request directly to the server
-            printWriter.println("REGISTER: " + username + ", " + password + ", " + Role.CLIENT);
+            printWriter.println("REGISTER, " + username + ", " + password + ", " + Role.CLIENT);
             printWriter.flush();
             System.out.println("Registration request sent to server.");
         }

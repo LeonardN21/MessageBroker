@@ -28,6 +28,9 @@ public class UserService {
     public void saveUser(User user) {
         try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
              PreparedStatement stmt = connection.prepareStatement("INSERT INTO user (username, password, role) VALUES (?, ?, ?)")) {
+            stmt.setString(1, user.getUsername());
+            stmt.setString(2, user.getPassword());
+            stmt.setString(3, user.getRole().name());
 
             stmt.executeUpdate();
         } catch (SQLException e) {

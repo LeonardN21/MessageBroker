@@ -46,7 +46,7 @@ public class ClientHandler implements Runnable {
 
     private void registerClient(String username, String password, String role) {
         User user = new User(username, password, Role.valueOf(role));
-     
+        userService.saveUser(user);
     }
 
     public void validateMessageForRegister(String message, PrintWriter writer) {
