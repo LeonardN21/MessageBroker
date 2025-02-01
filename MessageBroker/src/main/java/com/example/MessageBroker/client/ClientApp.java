@@ -12,6 +12,7 @@ public class ClientApp {
 
 
         ClientApp clientApp = new ClientApp();
+        System.out.println("TEST");
         clientApp.startClient();
     }
 
