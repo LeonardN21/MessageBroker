@@ -1,18 +1,19 @@
 package com.example.MessageBroker.client;
 
+import com.example.MessageBroker.entities.user.User;
 import com.example.MessageBroker.entities.user.UserService;
-import org.springframework.stereotype.Service;
 
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
 
-@Service    //beans
 public class ClientApp {
 
-    Socket socket;
+    private Socket socket;
 
     public static void main(String[] args) {
+
+
         ClientApp clientApp = new ClientApp();
         clientApp.startClient();
     }
@@ -25,7 +26,7 @@ public class ClientApp {
             ClientDialog clientDialog = new ClientDialog(printWriter);
             clientDialog.startDialog();
         } catch (IOException e) {
-            throw new RuntimeException(e);
+            throw new RuntimeException("Error connecting to server: " + e.getMessage(), e);
         }
     }
 }

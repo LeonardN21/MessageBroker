@@ -26,40 +26,37 @@ public class ClientHandler implements Runnable {
         try {
             BufferedReader reader = new BufferedReader(new InputStreamReader(clientSocket.getInputStream()));
             PrintWriter writer = new PrintWriter(clientSocket.getOutputStream(), true);
-            System.out.println("TESTTTTTTTTTT");
+
             String message;
             while ((message = reader.readLine()) != null) {
-                System.out.println("TEST");
                 System.out.println("Received from client: " + message);
 
-                // Example: Handle a registration request by saving user to the database
-                if (message.startsWith("REGISTER:")) {
-                    String[] parts = message.split(":");
-                    if (parts.length == 3) {
-                        String username = parts[1];
-                        String password = parts[2];
-                        registerClient(username, password);  // Register the client
-                        writer.println("Client registered successfully");
-                    }
+                if (message.contains("REGISTER")) {
+                    validateMessageForRegister(message, writer);
                 } else {
-                    writer.println("Message received: " + message);  // Echo the message back
+                    writer.println("Message received: " + message);
                 }
             }
         } catch (SocketException e) {
             e.printStackTrace();
-        }   catch (IOException e){
-
+        } catch (IOException e) {
+            System.err.println("I/O error: " + e.getMessage());
         }
     }
 
-    private void registerClient(String username, String password) {
-        // Create a new User object and set its properties
-        User user = new User();
-        user.setUsername(username);
-        user.setPassword(password);
-        user.setRole(Role.CLIENT);
-
-        // Save user to the database using UserService
+    private void registerClient(String username, String password, String role) {
+        User user = new User(username, password, Role.valueOf(role));
         userService.saveUser(user);
+    }
+
+    public void validateMessageForRegister(String message, PrintWriter writer) {
+        String[] parts = message.split(",");
+        if (parts.length == 4) {
+            String username = parts[1].trim();
+            String password = parts[2].trim();
+            String role = parts[3].trim();
+            registerClient(username, password, role);
+            writer.println("Client registered successfully");
+        }
     }
 }

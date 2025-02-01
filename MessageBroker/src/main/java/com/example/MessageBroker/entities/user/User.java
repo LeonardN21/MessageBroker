@@ -1,24 +1,20 @@
 package com.example.MessageBroker.entities.user;
 
-import jakarta.persistence.*;
-import lombok.Getter;
-import lombok.Setter;
+import lombok.AllArgsConstructor;
+import lombok.Data;
+import lombok.NoArgsConstructor;
 
-@Entity
-@Getter
-@Setter
+@Data
+@NoArgsConstructor
+@AllArgsConstructor
 public class User {
-    @Id
-    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
-
-    @Enumerated(EnumType.STRING)
-    private Role role;
     private String username;
     private String password;
+    private Role role;
 
-    public void setRole(Role role){
-        this.role = role;
+    public User(String username, String password, Role role) {
+        this.username = username;
+        this.password = password;
     }
-
 }
