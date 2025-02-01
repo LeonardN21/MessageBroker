@@ -10,16 +10,10 @@ import org.springframework.stereotype.Service;
 public class TestClass {
 
    @Autowired
-   UserService userService;
+   private UserService userService;
 
     public void saveUser(){
-        int i = 0;
-        while(i < 100){
-            User user = new User();
-            user.setRole(Role.CLIENT);
-            userService.saveUser(user);
-            i++;
-        }
+
     }
 
 }
