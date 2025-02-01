@@ -1,12 +1,9 @@
 package com.example.MessageBroker.entities.user;
 
-import lombok.AllArgsConstructor;
-import lombok.Data;
-import lombok.NoArgsConstructor;
+import lombok.Getter;
+import lombok.Setter;
 
-@Data
-@NoArgsConstructor
-@AllArgsConstructor
+@Getter
 public class User {
     private Long id;
     private String username;

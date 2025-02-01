@@ -1,8 +1,5 @@
 package com.example.MessageBroker.client;
 
-import com.example.MessageBroker.entities.user.User;
-import com.example.MessageBroker.entities.user.UserService;
-
 import java.io.IOException;
 import java.io.PrintWriter;
 import java.net.Socket;
