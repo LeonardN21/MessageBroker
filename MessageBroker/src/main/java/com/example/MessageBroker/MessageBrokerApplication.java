@@ -1,7 +1,7 @@
 package com.example.MessageBroker;
 
 import com.example.MessageBroker.entities.user.UserHandler;
-import com.example.MessageBroker.entities.user.UserService;
+import com.example.MessageBroker.utilities.DatabaseService;
 
 import java.io.IOException;
 import java.net.ServerSocket;
@@ -21,7 +21,7 @@ public class MessageBrokerApplication {
 
     private static final int PORT = 8080;
     private static final ExecutorService pool = Executors.newFixedThreadPool(10);
-    private static final UserService userService = new UserService();
+    private static final DatabaseService DATABASE_SERVICE = new DatabaseService();
 
     public static void main(String[] args) {
         new MessageBrokerApplication().startServer();
@@ -34,7 +34,7 @@ public class MessageBrokerApplication {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("New client connected");
-                UserHandler userHandler = new UserHandler(clientSocket, userService);
+                UserHandler userHandler = new UserHandler(clientSocket, DATABASE_SERVICE);
                 pool.submit(userHandler);
             }
         } catch (IOException e) {

@@ -2,6 +2,7 @@ package com.example.MessageBroker.entities.user;
 
 import com.example.MessageBroker.admin.AdminDialog;
 import com.example.MessageBroker.client.ClientDialog;
+import com.example.MessageBroker.utilities.DatabaseService;
 import com.example.MessageBroker.utilities.Encryptor;
 
 import java.io.PrintWriter;
@@ -11,14 +12,14 @@ public class UserDialog {
 
     private PrintWriter printWriter;
     Scanner scanner = new Scanner(System.in);
-    UserService userService;
+    DatabaseService databaseService;
 
     public UserDialog(PrintWriter printWriter){
         this.printWriter = printWriter;
     }
 
     public void startDialog(){
-        userService = new UserService();
+        databaseService = new DatabaseService();
         int choice = 0;
         while (choice != -1){
             System.out.println("Hello, choose one option");
@@ -57,7 +58,7 @@ public class UserDialog {
         System.out.println("Password:");
         String password = scanner.nextLine();
         Encryptor encryptor = new Encryptor(password);
-        User user = userService.findByUsernameAndPassword(username, encryptor.getPassword());
+        User user = databaseService.findByUsernameAndPassword(username, encryptor.getPassword());
         System.out.println(user.getUsername() + " " + user.getPassword() + " " + user.getRole());
         if(user.getRole() == Role.CLIENT){
             ClientDialog clientDialog = new ClientDialog();

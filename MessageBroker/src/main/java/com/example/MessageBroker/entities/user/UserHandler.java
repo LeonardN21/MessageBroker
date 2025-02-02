@@ -1,5 +1,7 @@
 package com.example.MessageBroker.entities.user;
 
+import com.example.MessageBroker.utilities.DatabaseService;
+
 import java.io.BufferedReader;
 import java.io.IOException;
 import java.io.InputStreamReader;
@@ -10,11 +12,11 @@ import java.net.SocketException;
 public class UserHandler implements Runnable {
 
     private final Socket clientSocket;
-    private final UserService userService;
+    private final DatabaseService databaseService;
 
-    public UserHandler(Socket clientSocket, UserService userService) {
+    public UserHandler(Socket clientSocket, DatabaseService databaseService) {
         this.clientSocket = clientSocket;
-        this.userService = userService;
+        this.databaseService = databaseService;
     }
 
     @Override
@@ -42,7 +44,7 @@ public class UserHandler implements Runnable {
 
     private void registerClient(String username, String password, String role) {
         User user = new User(username, password, Role.valueOf(role));
-        userService.saveUser(user);
+        databaseService.saveUser(user);
     }
 
     public void validateMessageForRegister(String message, PrintWriter writer) {

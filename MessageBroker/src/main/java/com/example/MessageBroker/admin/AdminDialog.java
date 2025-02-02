@@ -1,5 +1,8 @@
 package com.example.MessageBroker.admin;
 
+import com.example.MessageBroker.entities.event.EventType;
+import com.example.MessageBroker.utilities.DatabaseService;
+
 public class AdminDialog {
 
     /*{
@@ -13,8 +16,14 @@ public class AdminDialog {
 
      */
 
-    public void testmethod(){
+    public void testmethod() {
         System.out.println("hi admin");
-    }
 
+        DatabaseService databaseService = new DatabaseService();
+        EventType eventType = new EventType("checkTemperature4", "checks temperature");
+        databaseService.createEventType(eventType);
+        System.out.println("...");
+        EventType eventType2 = databaseService.findEventTypeById(1L);
+        System.out.println(eventType2.getEventTypeName() + eventType2.getDescription() + eventType2.getId());
+    }
 }

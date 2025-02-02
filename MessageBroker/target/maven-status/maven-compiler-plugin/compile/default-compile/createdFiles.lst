@@ -1,9 +1,0 @@
-com\example\MessageBroker\entities\event\Event.class
-com\example\MessageBroker\MessageBrokerApplication.class
-com\example\MessageBroker\entities\user\User.class
-com\example\MessageBroker\entities\user\UserService.class
-com\example\MessageBroker\entities\user\Role.class
-com\example\MessageBroker\TestClass.class
-com\example\MessageBroker\client\ClientHandler.class
-com\example\MessageBroker\client\ClientDialog.class
-com\example\MessageBroker\client\ClientApp.class
