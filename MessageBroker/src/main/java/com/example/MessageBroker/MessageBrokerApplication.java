@@ -1,6 +1,6 @@
 package com.example.MessageBroker;
 
-import com.example.MessageBroker.client.ClientHandler;
+import com.example.MessageBroker.entities.user.UserHandler;
 import com.example.MessageBroker.entities.user.UserService;
 
 import java.io.IOException;
@@ -10,6 +10,14 @@ import java.util.concurrent.ExecutorService;
 import java.util.concurrent.Executors;
 
 public class MessageBrokerApplication {
+
+    /*
+        S1. Anfragen an den Message Broker müssen parallel in eigenen Prozessen oder
+            Threads behandelt werden.
+    ??? S5. Nachrichten müssen auch dann zugestellt werden, wenn ein Client vorrübergehend
+            nicht erreichbar ist.
+
+     */
 
     private static final int PORT = 8080;
     private static final ExecutorService pool = Executors.newFixedThreadPool(10);
@@ -26,8 +34,8 @@ public class MessageBrokerApplication {
             while (true) {
                 Socket clientSocket = serverSocket.accept();
                 System.out.println("New client connected");
-                ClientHandler clientHandler = new ClientHandler(clientSocket, userService);
-                pool.submit(clientHandler);
+                UserHandler userHandler = new UserHandler(clientSocket, userService);
+                pool.submit(userHandler);
             }
         } catch (IOException e) {
             throw new RuntimeException("Error starting server: " + e.getMessage(), e);

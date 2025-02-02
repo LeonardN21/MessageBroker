@@ -17,12 +17,7 @@ public class UserService {
              ResultSet rs = stmt.executeQuery("SELECT * FROM user")) {
 
             while (rs.next()) {
-                users.add(new User(
-                        rs.getLong("id"),
-                        rs.getString("username"),
-                        rs.getString("password"),
-                        Role.valueOf(rs.getString("role"))
-                ));
+
             }
         } catch (SQLException e) {
             throw new RuntimeException("Database error: " + e.getMessage(), e);
@@ -33,25 +28,25 @@ public class UserService {
     public void saveUser(User user) {
         try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
              PreparedStatement stmt = connection.prepareStatement("INSERT INTO user (username, password, role) VALUES (?, ?, ?)")) {
-
             stmt.setString(1, user.getUsername());
             stmt.setString(2, user.getPassword());
             stmt.setString(3, user.getRole().name());
+
             stmt.executeUpdate();
         } catch (SQLException e) {
             throw new RuntimeException("Database error: " + e.getMessage(), e);
         }
     }
 
-    public User findByUsername(String username) {
+    public User findByUsernameAndPassword(String username, String password) {
         try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM user WHERE username = ?")) {
+             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM user WHERE username = ?" + "AND password = ?")) {
 
             stmt.setString(1, username);
+            stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new User(
-                        rs.getLong("id"),
                         rs.getString("username"),
                         rs.getString("password"),
                         Role.valueOf(rs.getString("role"))
