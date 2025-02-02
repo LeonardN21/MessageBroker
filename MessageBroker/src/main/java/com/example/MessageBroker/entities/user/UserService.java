@@ -38,15 +38,15 @@ public class UserService {
         }
     }
 
-    public User findByUsername(String username) {
+    public User findByUsernameAndPassword(String username, String password) {
         try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
-             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM user WHERE username = ?")) {
+             PreparedStatement stmt = connection.prepareStatement("SELECT * FROM user WHERE username = ?" + "AND password = ?")) {
 
             stmt.setString(1, username);
+            stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
                 return new User(
-
                         rs.getString("username"),
                         rs.getString("password"),
                         Role.valueOf(rs.getString("role"))
