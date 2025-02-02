@@ -1,4 +1,4 @@
-package com.example.MessageBroker.client;
+package com.example.MessageBroker.entities.user;
 
 import java.io.IOException;
 import java.io.PrintWriter;

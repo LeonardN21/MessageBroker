@@ -1,9 +1,8 @@
-package com.example.MessageBroker.client;
+package com.example.MessageBroker.entities.user;
 
 import com.example.MessageBroker.admin.AdminDialog;
-import com.example.MessageBroker.entities.user.Role;
-import com.example.MessageBroker.entities.user.User;
-import com.example.MessageBroker.entities.user.UserService;
+import com.example.MessageBroker.client.ClientDialog;
+import com.example.MessageBroker.utilities.Encryptor;
 
 import java.io.PrintWriter;
 import java.util.Scanner;

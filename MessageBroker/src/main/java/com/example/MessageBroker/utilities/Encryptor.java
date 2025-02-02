@@ -1,4 +1,4 @@
-package com.example.MessageBroker.client;
+package com.example.MessageBroker.utilities;
 
 import java.security.MessageDigest;
 import java.security.NoSuchAlgorithmException;
