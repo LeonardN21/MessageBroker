@@ -3,6 +3,8 @@ package com.example.MessageBroker.admin;
 import com.example.MessageBroker.entities.event.EventType;
 import com.example.MessageBroker.utilities.DatabaseService;
 
+import java.io.PrintWriter;
+
 public class AdminDialog {
 
     /*{
@@ -12,9 +14,12 @@ public class AdminDialog {
 
     S3. Über den Admin-Client muss es möglich sein den Status des Brokers zu überwachen
         und Statistiken abzurufen.
-
-
      */
+    private PrintWriter printWriter;
+
+    public AdminDialog(PrintWriter printWriter){
+        this.printWriter = printWriter;
+    }
 
     public void testmethod() {
         System.out.println("hi admin");

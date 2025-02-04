@@ -23,6 +23,7 @@ public class MessageBrokerApplication {
     private static final ExecutorService pool = Executors.newFixedThreadPool(10);
     private static final DatabaseService DATABASE_SERVICE = new DatabaseService();
 
+
     public static void main(String[] args) {
         new MessageBrokerApplication().startServer();
     }
@@ -33,7 +34,7 @@ public class MessageBrokerApplication {
 
             while (true) {
                 Socket clientSocket = serverSocket.accept();
-                System.out.println("New client connected");
+                System.out.println("New client connected at port: " + clientSocket.getPort());
                 UserHandler userHandler = new UserHandler(clientSocket, DATABASE_SERVICE);
                 pool.submit(userHandler);
             }

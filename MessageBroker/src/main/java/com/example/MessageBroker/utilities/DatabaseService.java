@@ -2,6 +2,7 @@ package com.example.MessageBroker.utilities;
 
 import com.example.MessageBroker.entities.event.Event;
 import com.example.MessageBroker.entities.event.EventType;
+import com.example.MessageBroker.entities.subscription.Subscription;
 import com.example.MessageBroker.entities.user.Role;
 import com.example.MessageBroker.entities.user.User;
 
@@ -51,11 +52,13 @@ public class DatabaseService {
             stmt.setString(2, password);
             ResultSet rs = stmt.executeQuery();
             if (rs.next()) {
-                return new User(
+                User user = new User(
                         rs.getString("username"),
                         rs.getString("password"),
                         Role.valueOf(rs.getString("role"))
                 );
+                user.setId(rs.getLong("id"));
+                return user;
             }
         } catch (SQLException e) {
             throw new RuntimeException("Database error: " + e.getMessage(), e);
@@ -119,5 +122,50 @@ public class DatabaseService {
         }
         return null;
     }
+
+    public List<EventType> getAllEventTypes() {
+        List<EventType> eventTypeList = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+             Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM event_type")) {
+
+            while (rs.next()) {
+                EventType eventType = new EventType(rs.getString("event_type_name"), rs.getString("description"));
+                eventType.setId(rs.getLong("id"));
+                eventTypeList.add(eventType);
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Database error: " + e.getMessage(), e);
+        }
+        return eventTypeList;
+    }
+
+    public void createSubscription(Subscription subscription) {
+        try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+             PreparedStatement stmt = connection.prepareStatement("INSERT INTO subscription (user_id, event_id) VALUES (?, ?)")) {
+            stmt.setLong(1, subscription.getUserId());
+            stmt.setLong(2, subscription.getEventTypeId());
+
+            stmt.executeUpdate();
+        } catch (SQLException e) {
+            throw new RuntimeException("Database error: " + e.getMessage(), e);
+        }
+    }
+
+    public List<Long> getAllSubscribers(Long eventTypeId) {
+        List<Long> userIdList = new ArrayList<>();
+        try (Connection connection = DriverManager.getConnection(URL, USERNAME, PASSWORD);
+             Statement stmt = connection.createStatement();
+             ResultSet rs = stmt.executeQuery("SELECT * FROM subscription WHERE event_id =" + eventTypeId)) {
+
+            while (rs.next()) {
+                userIdList.add(rs.getLong("user_id"));
+            }
+        } catch (SQLException e) {
+            throw new RuntimeException("Database error: " + e.getMessage(), e);
+        }
+        return userIdList;
+    }
+
 
 }

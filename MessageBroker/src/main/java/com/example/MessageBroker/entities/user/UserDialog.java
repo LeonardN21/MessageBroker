@@ -5,17 +5,20 @@ import com.example.MessageBroker.client.ClientDialog;
 import com.example.MessageBroker.utilities.DatabaseService;
 import com.example.MessageBroker.utilities.Encryptor;
 
+import java.io.BufferedReader;
 import java.io.PrintWriter;
 import java.util.Scanner;
 
 public class UserDialog {
 
     private PrintWriter printWriter;
+    private BufferedReader reader;
     Scanner scanner = new Scanner(System.in);
     DatabaseService databaseService;
 
-    public UserDialog(PrintWriter printWriter){
+    public UserDialog(PrintWriter printWriter, BufferedReader reader){
         this.printWriter = printWriter;
+        this.reader = reader;
     }
 
     public void startDialog(){
@@ -44,7 +47,6 @@ public class UserDialog {
         Encryptor encryptor = new Encryptor(password);
         password = encryptor.getPassword();
         if (printWriter != null) {
-            // Sends the registration request directly to the server
             printWriter.println("REGISTER, " + username + ", " + password + ", " + Role.CLIENT);
             printWriter.flush();
             System.out.println("Registration request sent to server.");
@@ -59,12 +61,14 @@ public class UserDialog {
         String password = scanner.nextLine();
         Encryptor encryptor = new Encryptor(password);
         User user = databaseService.findByUsernameAndPassword(username, encryptor.getPassword());
+        printWriter.println("CLIENTID, " + user.getId());
+        printWriter.flush();
         System.out.println(user.getUsername() + " " + user.getPassword() + " " + user.getRole());
         if(user.getRole() == Role.CLIENT){
-            ClientDialog clientDialog = new ClientDialog();
-            clientDialog.testmethod();
+            ClientDialog clientDialog = new ClientDialog(printWriter, reader, user);
+            clientDialog.startClientDialog();
         }else{
-            AdminDialog adminDialog = new AdminDialog();
+            AdminDialog adminDialog = new AdminDialog(printWriter);
             adminDialog.testmethod();
         }
     }
