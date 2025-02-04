@@ -12,11 +12,13 @@ public class EventType {
     private String eventTypeName;
     private String description;
 
-    public EventType(String eventTypeName, String description){
+    public EventType(String eventTypeName, String description) {
         this.eventTypeName = eventTypeName;
         this.description = description;
     }
 
+    public EventType() {
+    }
 
 
 }
