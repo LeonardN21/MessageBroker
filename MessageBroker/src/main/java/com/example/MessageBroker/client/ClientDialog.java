@@ -19,7 +19,6 @@ public class ClientDialog {
 
     private User user;
 
-    private boolean flag;
 
     public ClientDialog(PrintWriter printWriter, BufferedReader reader, User user) {
         this.printWriter = printWriter;
@@ -29,7 +28,6 @@ public class ClientDialog {
 
     // Method to start the client dialog
     public void startClientDialog() {
-        flag = false;
         // Start a background thread to listen for messages from the server
         startMessageListenerThread();
 
@@ -42,16 +40,19 @@ public class ClientDialog {
         new Thread(() -> {
             try {
                 String message;
-                while (true) {
-                    if (!flag) {
-                        // Read and print message from the server
-                        while ((message = reader.readLine()) != null) {
-                            System.out.println("Received from server: " + message);
-                            break;
-                        }
-                        break;
+                // Read and print message from the server
+                while ((message = reader.readLine()) != null) {
+                    if (message.contains("EVENT TYPES")) {
+                        getEventTypeList(message);
+                    } else if (message.equals("END")) {
+
+                    } else{
+                        System.out.println(message);
                     }
+                    System.out.println("Received from server: " + message);
+
                 }
+
             } catch (IOException e) {
                 e.printStackTrace();
 
@@ -61,7 +62,7 @@ public class ClientDialog {
 
     // Method for running the main menu in the client
     private void runMenu() {
-        scanner = new Scanner(System.in);
+        scanner = new Scanner(System.in);  // Only one Scanner instance in main thread
         int choice = 0;
 
         while (choice != -1) {
@@ -70,11 +71,16 @@ public class ClientDialog {
                     "2. Subscribe\n" +
                     "3. Exit");
             choice = scanner.nextInt();
+            scanner.nextLine(); // Consume the leftover newline
 
             if (choice == 1) {
-                createEvent();
+                requestEventTypes();
+                waitForEventTypes();
+                chooseEventTypeAndCreate();
             } else if (choice == 2) {
-                subscribeToEvent();
+                requestEventTypes();
+                waitForEventTypes();
+                chooseEventTypeAndSubscribe();
             } else if (choice == 3) {
                 System.out.println("Exiting...");
                 break;
@@ -82,15 +88,48 @@ public class ClientDialog {
         }
     }
 
+    private void chooseEventTypeAndCreate() {
+        System.out.println("Choose an event type: ");
+        for (int i = 0; i < eventTypeList.size(); i++) {
+            System.out.println((i + 1) + ". " + eventTypeList.get(i).getEventTypeName());
+        }
+        int eventChoice = scanner.nextInt();
+
+        if (eventChoice > 0 && eventChoice <= eventTypeList.size()) {
+            createEvent(eventChoice);
+        } else {
+            System.out.println("Invalid choice.");
+        }
+    }
+
+    private void chooseEventTypeAndSubscribe() {
+        System.out.println("Choose an event type: ");
+        for (int i = 0; i < eventTypeList.size(); i++) {
+            System.out.println((i + 1) + ". " + eventTypeList.get(i).getEventTypeName());
+        }
+        int eventChoice = scanner.nextInt();
+
+        if (eventChoice > 0 && eventChoice <= eventTypeList.size()) {
+            subscribeToEvent(eventChoice);
+        } else {
+            System.out.println("Invalid choice.");
+        }
+    }
+
     // Method to create an event
-    public void createEvent() {
-        scanner.nextLine();  // Consume the newline
+    public void createEvent(int eventchoice) {
         try {
-            int choice = getEventTypeList();
             String payload = createEventPayload();
-            printWriter.println("CREATE EVENT," + eventTypeList.get(choice - 1).getId() + "," + payload);
+            printWriter.println("CREATE EVENT," + eventTypeList.get(eventchoice - 1).getId() + "," + payload);
         } catch (Exception e) {
             e.printStackTrace();
+        }
+    }
+
+    public void requestEventTypes() {
+        if (printWriter != null) {
+            printWriter.println("GET EVENT TYPE LIST");
+            System.out.println("Get list request sent to server.");
         }
     }
 
@@ -102,53 +141,40 @@ public class ClientDialog {
     }
 
     // Method to get the list of event types from the server
-    public int getEventTypeList() {
-        int choice = 0;
+    public void getEventTypeList(String message) {
         try {
-            if (printWriter != null) {
-                printWriter.println("GET EVENT TYPE LIST");
-                System.out.println("Get list request sent to server.");
-            }
-
-            StringBuilder jsonResponse = new StringBuilder();
-            String line;
-            while ((line = reader.readLine()) != null) {
-                if (line.equals("END")) break;
-                jsonResponse.append(line);
-            }
-
-            flag = false;
-            startMessageListenerThread();
-
-            String jsonText = jsonResponse.toString();
-            int jsonStart = jsonText.indexOf("[");
-
-            if (jsonStart != -1) {
-                jsonText = jsonText.substring(jsonStart);
-            } else {
+            int jsonStart = message.indexOf("[");
+            if (jsonStart == -1) {
                 throw new RuntimeException("Invalid response: JSON array not found.");
             }
+
+            String jsonText = message.substring(jsonStart);
             System.out.println("Raw response from server: " + jsonText);
 
             ObjectMapper objectMapper = new ObjectMapper();
             EventType[] eventArray = objectMapper.readValue(jsonText, EventType[].class);
             eventTypeList = Arrays.asList(eventArray);
 
-            for (int i = 0; i < eventTypeList.size(); i++) {
-                System.out.println((i + 1) + ". " + eventTypeList.get(i).getEventTypeName());
-            }
+            System.out.println("Event types received.");
 
-            System.out.println("Choose one option: ");
-            choice = scanner.nextInt();
         } catch (Exception e) {
             e.printStackTrace();
         }
-        return choice;
+    }
+
+    private void waitForEventTypes() {
+        while (eventTypeList == null || eventTypeList.isEmpty()) {
+            System.out.println("Waiting for event types...");
+            try {
+                Thread.sleep(1000);  // Wait for data to arrive
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
     }
 
     // Method to subscribe to an event type
-    public void subscribeToEvent() {
-        int choice = getEventTypeList();
+    public void subscribeToEvent(int choice) {
         printWriter.println("SUBSCRIBE," + eventTypeList.get(choice - 1).getId() + "," + user.getId());
     }
 }

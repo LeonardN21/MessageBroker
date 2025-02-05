@@ -11,6 +11,7 @@ import java.util.Scanner;
 public class UserApp {
 
     private Socket socket;
+    private Scanner scanner;
 
     public static void main(String[] args) {
         UserApp userApp = new UserApp();
